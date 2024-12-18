@@ -1,7 +1,8 @@
-// src/app/core/services/auth/auth.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, getAuth, UserCredential } from 'firebase/auth';
+import { Auth } from '@angular/fire/auth'; // Import Firebase Auth
+import { inject } from '@angular/core';
 import { IUser } from '../../shared/interfaces/user.interface';
 
 @Injectable({
@@ -10,6 +11,7 @@ import { IUser } from '../../shared/interfaces/user.interface';
 export class AuthService {
   private user$$ = new BehaviorSubject<IUser | undefined>(undefined);
   private user$ = this.user$$.asObservable();
+  private auth = inject(Auth); // Inject Firebase Auth service
 
   constructor() {
     // Load user from localStorage if exists
@@ -25,34 +27,53 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<any> {
-    // Simulate login process
-    const userData: IUser = {
-      _id: Date.now().toString(),
-      email: email,
-      username: email.split('@')[0]
-    };
+    // Use Firebase Authentication to sign in
+    return new Observable((observer) => {
+      signInWithEmailAndPassword(this.auth, email, password)
+        .then((userCredential: UserCredential) => {
+          const userData: IUser = {
+            _id: userCredential.user.uid,
+            email: userCredential.user.email || '',
+            username: userCredential.user.email?.split('@')[0] || ''
+          };
 
-    localStorage.setItem('auth_token', userData._id);
-    localStorage.setItem('user', JSON.stringify(userData));
-    this.user$$.next(userData);
-
-    return from(Promise.resolve({ user: userData, token: userData._id }));
+          localStorage.setItem('auth_token', userData._id);
+          localStorage.setItem('user', JSON.stringify(userData));
+          this.user$$.next(userData);
+          observer.next({ user: userData, token: userData._id });
+          observer.complete();
+        })
+        .catch((error) => {
+          console.error('Login error:', error);
+          observer.error(error);
+        });
+    });
   }
 
   register(email: string, password: string): Observable<any> {
-    // Simulate registration process
-    const userData: IUser = {
-      _id: Date.now().toString(),
-      email: email,
-      username: email.split('@')[0]
-    };
+    // Use Firebase Authentication to register a new user
+    return new Observable((observer) => {
+      createUserWithEmailAndPassword(this.auth, email, password)
+        .then((userCredential: UserCredential) => {
+          const userData: IUser = {
+            _id: userCredential.user.uid,
+            email: userCredential.user.email || '',
+            username: userCredential.user.email?.split('@')[0] || ''
+          };
 
-    localStorage.setItem('auth_token', userData._id);
-    localStorage.setItem('user', JSON.stringify(userData));
-    this.user$$.next(userData);
-
-    return from(Promise.resolve({ user: userData, token: userData._id }));
+          localStorage.setItem('auth_token', userData._id);
+          localStorage.setItem('user', JSON.stringify(userData));
+          this.user$$.next(userData);
+          observer.next({ user: userData, token: userData._id });
+          observer.complete();
+        })
+        .catch((error) => {
+          console.error('Registration error:', error);
+          observer.error(error);
+        });
+    });
   }
+
 
   logout(): Observable<void> {
     localStorage.removeItem('auth_token');

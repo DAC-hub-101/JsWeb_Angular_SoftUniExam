@@ -32,7 +32,7 @@ export class LoginComponent {
       const { email, password } = this.loginForm.value;
       this.authService.login(email, password).subscribe({
         next: () => {
-          this.router.navigate(['/movies']);
+          this.router.navigate(['/catalog']);
         },
         error: (err: any) => {
           console.error('Login error:', err);
