@@ -1,0 +1,38 @@
+<!-- src/app/catalog/catalog.component.html -->
+<div class="catalog-container">
+    <h1>Movie Discussions</h1>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading">
+        Loading movies...
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="error-message">
+        {{ error }}
+    </div>
+
+    <!-- Movies Grid -->
+    <div *ngIf="!loading && !error" class="movies-grid">
+        <div *ngIf="movies.length === 0" class="no-movies">
+            No movies available yet. Be the first to add one!
+        </div>
+
+        <div *ngFor="let movie of movies" class="movie-card">
+            <img [src]="movie.poster" [alt]="movie.title" class="movie-poster">
+            <div class="movie-info">
+                <h3>{{ movie.title }}</h3>
+                <p class="director">Director: {{ movie.director }}</p>
+                <p class="year">Year: {{ movie.year }}</p>
+                <div class="genres">
+                    <span *ngFor="let genre of movie.genre" class="genre-tag">
+                        {{ genre }}
+                    </span>
+                </div>
+                <a [routerLink]="['/movies', movie.id]" class="view-button">
+                    View Details
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

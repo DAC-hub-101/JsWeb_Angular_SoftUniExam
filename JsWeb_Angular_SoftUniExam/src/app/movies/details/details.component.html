@@ -1,0 +1,86 @@
+<div class="details-container">
+    <div class="content-box">
+        <div *ngIf="loading" class="loading">Loading movie details...</div>
+        <div *ngIf="error" class="error-message">{{ error }}</div>
+
+        <div *ngIf="movie && !loading && !error" class="movie-content">
+            <div class="movie-header">
+                <img [src]="movie!.poster" [alt]="movie!.title" class="movie-poster">
+                <div class="movie-info">
+                    <h1>{{ movie!.title }}</h1>
+                    <p class="director">Director: {{ movie!.director }}</p>
+                    <p class="year">Year: {{ movie!.year }}</p>
+
+                    <div class="genres">
+                        <span *ngFor="let genre of movie!.genre" class="genre-tag">{{ genre }}</span>
+                    </div>
+
+                    <!-- Action buttons based on ownership -->
+                    <div class="action-buttons">
+                        <!-- Author buttons -->
+                        <ng-container *ngIf="movieService.isOwner(movie)">
+                            <button class="edit-button" (click)="onEdit()">Edit</button>
+                            <button class="delete-button" (click)="onDelete()">Delete</button>
+                        </ng-container>
+
+                        <!-- Non-author buttons -->
+                        <ng-container *ngIf="!movieService.isOwner(movie)">
+                            <button class="like-button" (click)="onLike()" [class.liked]="isLiked">
+                                <span class="like-icon">👍</span>
+                                {{ movie.likes?.length || 0 }} Likes
+                            </button>
+                            <button class="comment-button" (click)="focusCommentInput()">
+                                <span class="comment-icon">💬</span>
+                                Add Comment
+                            </button>
+                        </ng-container>
+                    </div>
+
+                    <!-- Rating display -->
+                    <div class="rating-info">
+                        <div class="rating-stars">⭐⭐⭐⭐⭐</div>
+                        <span class="rating-value">{{ movie.rating || 0 }}/5</span>
+                        <span class="rating-count">({{ movie.totalRatings || 0 }} ratings)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-plot">
+                <h2>Plot</h2>
+                <p>{{ movie!.plot }}</p>
+            </div>
+
+            <!-- Comments section -->
+            <div class="comments-section">
+                <h2>Comments</h2>
+
+                <!-- Comment form -->
+                <div class="comment-form" *ngIf="!movieService.isOwner(movie)">
+                    <textarea #commentInput placeholder="Write a comment..." [(ngModel)]="newComment"
+                        class="comment-input">
+         </textarea>
+                    <button class="submit-comment" [disabled]="!newComment.trim()" (click)="onAddComment()">
+                        Post Comment
+                    </button>
+                </div>
+
+                <!-- Comments list -->
+                <div class="comments-list">
+                    <!-- No comments message -->
+                    <div *ngIf="movie!.comments?.length === 0" class="no-comments">
+                        No comments yet. Be the first to comment!
+                    </div>
+
+                    <!-- Comments with debug info -->
+                    <div *ngFor="let comment of movie!.comments" class="comment">
+                        <p class="comment-content">{{ comment.content }}</p>
+                        <div class="comment-meta">
+                            <span class="comment-user">By: {{ comment.userEmail || 'Anonymous' }}</span>
+                            <span class="comment-date">{{ comment.createdAt | date:'medium' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
