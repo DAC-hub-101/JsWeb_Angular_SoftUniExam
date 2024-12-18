@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../core/services/auth.service'
+import { AuthService } from '../core/services/auth.service'
 import { Router } from '@angular/router';
 
 @Component({
@@ -32,7 +32,7 @@ export class LoginComponent {
       const { email, password } = this.loginForm.value;
       this.authService.login(email, password).subscribe({
         next: () => {
-          this.router.navigate(['/catalog']);
+          this.router.navigate(['/movies/catalog']);
         },
         error: (err: any) => {
           console.error('Login error:', err);

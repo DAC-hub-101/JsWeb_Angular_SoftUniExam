@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
-import { AuthService } from '../../core/services/auth.service'; // Import your AuthService
+import { AuthService } from '../core/services/auth.service'; // Import your AuthService
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';  // Import Router to handle navigation
 
@@ -44,7 +44,7 @@ export class RegisterComponent {
           next: (response) => {
             console.log('Registration successful:', response);
             // Redirect or show success message after registration.
-            this.router.navigate(['/catalog']);
+            this.router.navigate(['/movies/catalog']);
           },
           error: (err) => {
             console.error('Registration error:', err);
