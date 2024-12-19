@@ -21,7 +21,7 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule], // Add CommonModule to imports
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
   registerForm = new FormGroup({

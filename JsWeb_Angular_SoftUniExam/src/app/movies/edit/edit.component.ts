@@ -9,7 +9,7 @@ import { MovieService } from '../../core/services/movie.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './edit.component.html', // Can reuse same template as create
-  styleUrls: ['./edit.component.css']   // Can reuse same styles as create
+  styleUrls: ['./edit.component.scss']   // Can reuse same styles as create
 })
 export class EditComponent implements OnInit {
   movieForm: FormGroup;

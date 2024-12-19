@@ -11,7 +11,7 @@ import { Movie } from '../../shared/interfaces/movie.interface';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './trending.component.html',
-  styleUrls: ['./trending.component.css']
+  styleUrls: ['./trending.component.scss']
 })
 export class TrendingComponent implements OnInit {
   movies: Movie[] = [];

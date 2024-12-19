@@ -9,7 +9,7 @@ import { MovieService } from '../../core/services/movie.service'; // Import your
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './create.component.html',
-  styleUrls: ['./create.component.css']
+  styleUrls: ['./create.component.scss']
 })
 
 export class CreateComponent {

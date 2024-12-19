@@ -10,7 +10,7 @@ import { filter } from 'rxjs/operators';
   standalone: true,
   imports: [RouterOutlet, NavigationComponent, FooterComponent, CommonModule], // Include CommonModule here
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'JsWeb_Angular_SoftUniExam';

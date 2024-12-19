@@ -10,7 +10,7 @@ import { Movie } from '../shared/interfaces/movie.interface';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './catalog.component.html',
-  styleUrls: ['./catalog.component.css']
+  styleUrls: ['./catalog.component.scss']
 })
 export class CatalogComponent implements OnInit {
   movies: Movie[] = [];

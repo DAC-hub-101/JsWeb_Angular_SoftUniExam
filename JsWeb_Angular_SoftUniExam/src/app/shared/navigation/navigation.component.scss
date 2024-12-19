@@ -1,0 +1,108 @@
+// Variables for colors, spacing, and reusable values
+$primary-color: #1a1a1a;
+$secondary-color: #ff4444;
+$tertiary-color: #aa0808;
+$background-color: #f0f2f5;
+$logo-color: #ffffff;
+$nav-shadow: rgba(0, 0, 0, 0.1);
+
+// Navigation bar container
+nav {
+    background: $primary-color;
+    padding: 1rem;
+    box-shadow: 0 2px 4px $nav-shadow;
+}
+
+// Navigation container for max-width layout
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+// Logo styling
+.logo {
+    color: $logo-color;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+// Right side of the navigation (buttons)
+.nav-right {
+    display: flex;
+    gap: 1rem;
+}
+
+// General button styling
+.nav-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px $nav-shadow;
+    }
+}
+
+// Specific button styles for login, register, and logout
+.nav-btn.login {
+    background: $secondary-color;
+    color: $logo-color;
+}
+
+.nav-btn.register,
+.nav-btn.logout {
+    background: $primary-color;
+    color: $logo-color;
+}
+
+// Left side of the navigation (links)
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+// Navigation links container
+.nav-links {
+    display: flex;
+    gap: 1rem;
+}
+
+// Styling for individual navigation links
+.nav-link {
+    color: $tertiary-color;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background: $background-color;
+    }
+}
+
+// Emoji animation for specific links (flame effect)
+.nav-link:has(🔥) {
+    animation: flame 2s infinite;
+}
+
+@keyframes flame {
+
+    0%,
+    100% {
+        transform: rotate(-2deg);
+    }
+
+    50% {
+        transform: rotate(2deg);
+    }
+}
