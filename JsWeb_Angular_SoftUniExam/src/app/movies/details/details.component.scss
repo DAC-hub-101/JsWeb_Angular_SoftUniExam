@@ -317,3 +317,15 @@ h1 {
         font-size: 15px;
     }
 }
+
+.rating-star {
+    font-size: 24px;
+    cursor: pointer;
+    color: gray;
+    border: none;
+    background: none;
+}
+
+.rating-star.selected {
+    color: gold;
+}

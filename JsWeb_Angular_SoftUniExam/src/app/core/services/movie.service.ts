@@ -16,7 +16,7 @@ import {
   limit
 } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { Movie } from '../../shared/interfaces/movie.interface';
 import { MovieComment } from '../../shared/interfaces/movieComment.intercface';
 import { AuthService } from './auth.service';
@@ -174,6 +174,36 @@ export class MovieService {
           .sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))
           // Take only top 10
           .slice(0, 10);
+      })
+    );
+  } rateMovie(movieId: string, rating: number): Observable<Movie> {
+    const movieRef = doc(this.firestore, 'movies', movieId);
+
+    return from(getDoc(movieRef)).pipe(
+      switchMap((docSnap) => {
+        if (!docSnap.exists()) {
+          throw new Error('Movie not found');
+        }
+
+        const movie = docSnap.data() as Movie;
+        const totalRatings = movie.totalRatings || 0;
+        const averageRating = movie.rating || 0;
+
+        // Calculate new average
+        const newAverage =
+          (averageRating * totalRatings + rating) / (totalRatings + 1);
+
+        // Update the Firestore document
+        return from(updateDoc(movieRef, {
+          totalRatings: totalRatings + 1,
+          rating: newAverage,
+        })).pipe(
+          map(() => ({
+            ...movie,
+            totalRatings: totalRatings + 1,
+            rating: newAverage,
+          }))
+        );
       })
     );
   }

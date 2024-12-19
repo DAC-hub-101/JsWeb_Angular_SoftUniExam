@@ -17,15 +17,13 @@
 
                     <!-- Action buttons based on ownership -->
                     <div class="action-buttons">
-                        <!-- Author buttons -->
                         <ng-container *ngIf="movieService.isOwner(movie)">
                             <button class="edit-button" (click)="onEdit()">Edit</button>
                             <button class="delete-button" (click)="onDelete()">Delete</button>
                         </ng-container>
 
-                        <!-- Non-author buttons -->
                         <ng-container *ngIf="!movieService.isOwner(movie)">
-                            <button class="like-button" (click)="onLike()" [class.liked]="isLiked">
+                            <button class="like-button" (click)="onLike()">
                                 <span class="like-icon">👍</span>
                                 {{ movie.likes?.length || 0 }} Likes
                             </button>
@@ -36,10 +34,23 @@
                         </ng-container>
                     </div>
 
+                    <!-- Rating Section -->
+                    <div class="rating-section">
+                        <p>Rate this movie:</p>
+                        <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+                            <button class="rating-star" [class.selected]="(currentRating ?? 0) >= star"
+                                (click)="onRate(star)">
+                                ★
+                            </button>
+                        </ng-container>
+                        <p>Average Rating: {{ movie.averageRating || 0 }}/5 ({{ movie.totalRatings || 0 }} ratings)</p>
+                    </div>
+
                     <!-- Rating display -->
                     <div class="rating-info">
                         <div class="rating-stars">⭐⭐⭐⭐⭐</div>
-                        <span class="rating-value">{{ movie.rating || 0 }}/5</span>
+                        <span class="rating-value">{{ getRoundedRating(currentRating) }}/5</span>
+                        <!-- Display rounded rating -->
                         <span class="rating-count">({{ movie.totalRatings || 0 }} ratings)</span>
                     </div>
                 </div>
@@ -57,8 +68,7 @@
                 <!-- Comment form -->
                 <div class="comment-form" *ngIf="!movieService.isOwner(movie)">
                     <textarea #commentInput placeholder="Write a comment..." [(ngModel)]="newComment"
-                        class="comment-input">
-         </textarea>
+                        class="comment-input"></textarea>
                     <button class="submit-comment" [disabled]="!newComment.trim()" (click)="onAddComment()">
                         Post Comment
                     </button>
@@ -66,12 +76,9 @@
 
                 <!-- Comments list -->
                 <div class="comments-list">
-                    <!-- No comments message -->
                     <div *ngIf="movie!.comments?.length === 0" class="no-comments">
                         No comments yet. Be the first to comment!
                     </div>
-
-                    <!-- Comments with debug info -->
                     <div *ngFor="let comment of movie!.comments" class="comment">
                         <p class="comment-content">{{ comment.content }}</p>
                         <div class="comment-meta">
