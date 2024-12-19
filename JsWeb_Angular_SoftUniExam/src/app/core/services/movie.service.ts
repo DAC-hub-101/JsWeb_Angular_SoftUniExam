@@ -12,7 +12,8 @@ import {
   getDocs,
   orderBy,
   docData,
-  getDoc
+  getDoc,
+  limit
 } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -154,6 +155,25 @@ export class MovieService {
 
         updateDoc(movieRef, { comments: updatedComments });
         return { ...movie, comments: updatedComments };
+      })
+    );
+  }
+
+  getTopTrending(): Observable<Movie[]> {
+    const moviesRef = collection(this.firestore, 'movies');
+
+    // First get all movies because we need to sort by likes array length
+    return from(getDocs(moviesRef)).pipe(
+      map(snapshot => {
+        return snapshot.docs
+          .map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          } as Movie))
+          // Sort by likes array length
+          .sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))
+          // Take only top 10
+          .slice(0, 10);
       })
     );
   }

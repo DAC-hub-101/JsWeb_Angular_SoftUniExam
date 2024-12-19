@@ -1,0 +1,26 @@
+<!-- src/app/movies/trending/trending.component.html -->
+<div class="trending-container">
+    <h2>🔥 Trending Movies</h2>
+
+    <div *ngIf="loading" class="loading">Loading trending movies...</div>
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+
+    <div *ngIf="!loading && !error" class="movies-grid">
+        <div *ngIf="movies.length === 0" class="no-movies">
+            No movies available yet. Be the first to add a movie!
+        </div>
+
+        <div *ngFor="let movie of movies; let i = index" class="movie-card">
+            <span class="rank">#{{'0' + (i + 1)}}</span>
+            <img [src]="movie.poster" [alt]="movie.title" class="movie-poster">
+            <div class="movie-info">
+                <h3>{{ movie.title }}</h3>
+                <div class="likes">
+                    <span class="like-icon">👍</span>
+                    <span class="like-count">{{ movie.likes?.length || 0 }} Likes</span>
+                </div>
+                <a [routerLink]="['/movies', movie.id]" class="view-button">View Details</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,6 @@
 /* src/app/shared/navigation/navigation.component.css */
 nav {
-    background: #fff;
+    background: #000000;
     padding: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -15,7 +15,7 @@ nav {
 }
 
 .logo {
-    color: #1a1a1a;
+    color: #ffffff;
     text-decoration: none;
     font-size: 1.5rem;
     font-weight: bold;
@@ -36,9 +36,8 @@ nav {
 }
 
 .nav-btn.login {
-    background: transparent;
-    border: 1px solid #1a1a1a;
-    color: #1a1a1a;
+    background: #ff4444;
+    color: white;
 }
 
 .nav-btn.register {
@@ -54,4 +53,44 @@ nav {
 .nav-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-link {
+    color: #aa0808;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: background-color 0.2s;
+}
+
+.nav-link:hover {
+    background: #f0f2f5;
+}
+
+/* Add emoji animation */
+.nav-link:has(🔥) {
+    animation: flame 2s infinite;
+}
+
+@keyframes flame {
+
+    0%,
+    100% {
+        transform: rotate(-2deg);
+    }
+
+    50% {
+        transform: rotate(2deg);
+    }
 }

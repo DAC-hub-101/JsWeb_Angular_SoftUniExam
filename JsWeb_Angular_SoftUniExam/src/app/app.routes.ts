@@ -6,6 +6,7 @@ import { CreateComponent } from './movies/create/create.component';
 import { DetailsComponent } from './movies/details/details.component'; // Import DetailsComponent
 import { AuthGuard } from './core/guards/auth.guard';
 import { EditComponent } from './movies/edit/edit.component';
+import { TrendingComponent } from './movies/trending/trending.component';
 
 export const routes: Routes = [
     { path: 'auth/login', component: LoginComponent },
@@ -13,6 +14,7 @@ export const routes: Routes = [
     {
         path: 'movies',
         children: [
+            { path: 'trending', component: TrendingComponent },
             { path: 'catalog', component: CatalogComponent },
             { path: 'create', component: CreateComponent, canActivate: [AuthGuard] }, // Protected route
             { path: ':id', component: DetailsComponent, canActivate: [AuthGuard] }, // Protected route

@@ -3,6 +3,9 @@
     <div class="nav-container">
         <div class="nav-left">
             <a routerLink="/movies/catalog" class="logo">MovieTalks</a>
+            <div class="nav-links">
+                <a routerLink="/movies/trending" class="nav-link">🔥 Trending</a>
+            </div>
         </div>
 
         <div class="nav-right">
@@ -10,7 +13,6 @@
                 <button routerLink="/auth/login" class="nav-btn login">Login</button>
                 <button routerLink="/auth/register" class="nav-btn register">Register</button>
             </ng-container>
-
             <ng-container *ngIf="authService.isLoggedIn()">
                 <button routerLink="/movies/create" class="nav-btn">Add Movie</button>
                 <button (click)="logout()" class="nav-btn logout">Logout</button>
