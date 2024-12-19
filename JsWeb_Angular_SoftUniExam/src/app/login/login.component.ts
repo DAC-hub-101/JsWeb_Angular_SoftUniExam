@@ -1,9 +1,8 @@
-// src/app/features/auth/login/login.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../core/services/auth.service'
+import { AuthService } from '../core/services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -15,6 +14,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  loginError: string | null = null;  // Holds the error message
 
   constructor(
     private fb: FormBuilder,
@@ -35,6 +35,8 @@ export class LoginComponent {
           this.router.navigate(['/movies/catalog']);
         },
         error: (err: any) => {
+          // Display a generic error message, without specifying wrong password or non-existent user
+          this.loginError = 'Invalid credentials. Please check your email and password.';
           console.error('Login error:', err);
         }
       });

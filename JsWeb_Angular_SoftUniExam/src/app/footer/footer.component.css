@@ -1,0 +1,11 @@
+.app-footer {
+    background-color: #000000;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    /* Changed to relative */
+    bottom: 0;
+    /* Only necessary if you want it at the very bottom of its parent */
+    width: 100%;
+}
