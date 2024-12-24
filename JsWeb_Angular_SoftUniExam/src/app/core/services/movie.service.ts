@@ -178,33 +178,55 @@ export class MovieService {
     );
   } rateMovie(movieId: string, rating: number): Observable<Movie> {
     const movieRef = doc(this.firestore, 'movies', movieId);
+    const userId = localStorage.getItem('auth_token');
+
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
 
     return from(getDoc(movieRef)).pipe(
-      switchMap((docSnap) => {
-        if (!docSnap.exists()) {
-          throw new Error('Movie not found');
+      map(docSnap => {
+        const movie = { id: docSnap.id, ...docSnap.data() } as Movie;
+        const userRatings = movie.userRatings || {};
+        const oldRating = userRatings[userId];
+        const isUpdating = oldRating !== undefined;
+
+        // Calculate new average rating
+        let newAverageRating;
+        let totalRatings = movie.totalRatings || 0;
+
+        if (isUpdating) {
+          // Update existing rating
+          const currentTotal = (movie.rating || 0) * totalRatings;
+          newAverageRating = (currentTotal - oldRating + rating) / totalRatings;
+        } else {
+          // Add new rating
+          totalRatings += 1;
+          const currentTotal = (movie.rating || 0) * (totalRatings - 1);
+          newAverageRating = (currentTotal + rating) / totalRatings;
         }
 
-        const movie = docSnap.data() as Movie;
-        const totalRatings = movie.totalRatings || 0;
-        const averageRating = movie.rating || 0;
+        // Update movie with new rating data
+        const updateData = {
+          userRatings: { ...userRatings, [userId]: rating },
+          rating: newAverageRating,
+          totalRatings,
+          updatedAt: new Date()
+        };
 
-        // Calculate new average
-        const newAverage =
-          (averageRating * totalRatings + rating) / (totalRatings + 1);
+        updateDoc(movieRef, updateData);
 
-        // Update the Firestore document
-        return from(updateDoc(movieRef, {
-          totalRatings: totalRatings + 1,
-          rating: newAverage,
-        })).pipe(
-          map(() => ({
-            ...movie,
-            totalRatings: totalRatings + 1,
-            rating: newAverage,
-          }))
-        );
+        return {
+          ...movie,
+          ...updateData,
+          currentRating: rating
+        };
       })
     );
+  }
+
+  getUserRating(movie: Movie): number | null {
+    const userId = localStorage.getItem('auth_token');
+    return userId && movie.userRatings ? (movie.userRatings[userId] || null) : null;
   }
 }

@@ -1,9 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MovieService } from '../../core/services/movie.service';
 import { Movie } from '../../shared/interfaces/movie.interface';
 import { FormsModule } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-details',
@@ -12,8 +13,10 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent implements OnInit {
+export class DetailsComponent implements OnInit, OnDestroy {
   @ViewChild('commentInput') commentInput!: ElementRef;
+  private destroy$ = new Subject<void>();
+
   movie: Movie | null = null;
   loading = true;
   error: string | null = null;
@@ -24,18 +27,22 @@ export class DetailsComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     public movieService: MovieService,
     private router: Router,
-    private changeDetectorRef: ChangeDetectorRef // To manually trigger change detection if needed
+    private changeDetectorRef: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    this.activatedRoute.paramMap.subscribe(params => {
+    this.activatedRoute.paramMap.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(params => {
       const movieId = params.get('id');
       if (movieId) {
-        this.movieService.getById(movieId).subscribe({
+        this.movieService.getById(movieId).pipe(
+          takeUntil(this.destroy$)
+        ).subscribe({
           next: (movie) => {
             this.movie = movie;
             this.loading = false;
-            this.currentRating = movie.currentRating ?? null;
+            this.currentRating = this.movieService.getUserRating(movie);
           },
           error: (err) => {
             this.error = 'Failed to load movie details';
@@ -50,9 +57,14 @@ export class DetailsComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   getRoundedRating(rating: number | null): string {
-    if (rating === null) return 'N/A';  // Handle null ratings gracefully
-    return rating.toFixed(1);  // Round to 1 decimal place
+    if (rating === null) return 'N/A';
+    return rating.toFixed(1);
   }
 
   onEdit(): void {
@@ -74,13 +86,16 @@ export class DetailsComponent implements OnInit {
 
   onLike(): void {
     if (this.movie?.id) {
-      this.movieService.likeMovie(this.movie.id).subscribe({
+      this.movieService.likeMovie(this.movie.id).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
         next: (updatedMovie) => {
-          this.movie = updatedMovie; // The movie object will now reflect the new like status
+          this.movie = updatedMovie;
           this.changeDetectorRef.detectChanges();
         },
         error: (error) => {
           console.error(error);
+          this.error = 'Failed to like movie';
         }
       });
     }
@@ -92,10 +107,12 @@ export class DetailsComponent implements OnInit {
 
   onAddComment(): void {
     if (this.movie?.id && this.newComment.trim()) {
-      this.movieService.addComment(this.movie.id, this.newComment).subscribe({
+      this.movieService.addComment(this.movie.id, this.newComment).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
         next: (updatedMovie) => {
           this.movie = updatedMovie;
-          this.newComment = ''; // Reset comment input
+          this.newComment = '';
           this.changeDetectorRef.detectChanges();
         },
         error: (error) => {
@@ -107,24 +124,27 @@ export class DetailsComponent implements OnInit {
   }
 
   onRate(star: number): void {
-    if (this.movie?.id) {
-      // Prevent rating if the user has already rated the movie
-      if (this.currentRating !== null) {
-        this.error = 'You have already rated this movie.';
-        return; // Do not proceed if the user already has a rating
-      }
-
-      this.movieService.rateMovie(this.movie.id, star).subscribe({
-        next: (updatedMovie) => {
-          this.movie = updatedMovie;
-          this.currentRating = star;  // Update current rating
-          this.changeDetectorRef.detectChanges();
-        },
-        error: (error) => {
-          console.error('Error rating movie:', error);
-        }
-      });
+    if (!this.movie?.id) {
+      this.error = 'Invalid movie data';
+      return;
     }
+
+    this.movieService.rateMovie(this.movie.id, star).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (updatedMovie) => {
+        this.movie = updatedMovie;
+        this.currentRating = star;
+        this.error = null;
+      },
+      error: (error) => {
+        this.error = 'Failed to update rating. Please try again.';
+        console.error('Rating error:', error);
+      }
+    });
+  }
+
+  isUpdatingRating(star: number): boolean {
+    return this.currentRating !== null && this.currentRating !== star;
   }
 }
-

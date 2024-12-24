@@ -35,15 +35,22 @@
                     </div>
 
                     <!-- Rating Section -->
-                    <div class="rating-section">
+                    <div class="rating-section" aria-label="Movie rating section">
                         <p>Rate this movie:</p>
                         <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
                             <button class="rating-star" [class.selected]="(currentRating ?? 0) >= star"
-                                (click)="onRate(star)">
+                                (click)="onRate(star)" [attr.aria-label]="'Rate ' + star + ' stars'"
+                                [disabled]="isUpdatingRating(star)">
                                 ★
                             </button>
                         </ng-container>
-                        <p>Average Rating: {{ movie.averageRating || 0 }}/5 ({{ movie.totalRatings || 0 }} ratings)</p>
+
+                        <div *ngIf="error" class="error-message" role="alert">
+                            {{ error }}
+                        </div>
+
+                        <p>Average Rating: {{ movie.rating | number:'1.1-1' }}/5
+                            ({{ movie.totalRatings }} ratings)</p>
                     </div>
 
                     <!-- Rating display -->

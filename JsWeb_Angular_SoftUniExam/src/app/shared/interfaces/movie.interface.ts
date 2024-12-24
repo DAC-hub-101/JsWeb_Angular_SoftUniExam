@@ -17,5 +17,6 @@ export interface Movie {
     createdAt?: Date;
     updatedAt?: Date;
     currentRating?: number;
+    userRatings?: { [userId: string]: number }; // This is added to track who rated what
 }
 
