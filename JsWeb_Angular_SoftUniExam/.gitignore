@@ -44,4 +44,4 @@ Thumbs.db
 # Firebase
 .firebase/
 
-.env
+process.env
