@@ -17,6 +17,13 @@ This guide will walk you through setting up and running the Angular Movie Discus
 
 *   Node.js (>= 16.x recommended) and npm (>= 8.x recommended) or yarn installed on your machine. Verify by running `node -v` and `npm -v`
 
+## Environment Setup
+
+1. Navigate to `/src/environments/`
+2. Copy `environment.template.ts` to `environment.ts`
+3. Replace the placeholder values in `environment.ts` with your Firebase configuration
+4. For production, create `environment.prod.ts` with your production Firebase configuration
+
 **Steps:**
 
 1.  **Clone the Repository:**
